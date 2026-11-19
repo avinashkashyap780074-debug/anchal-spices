@@ -1,0 +1,130 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchal Spices | Shuddh Khade Masale - Anchal Spices and Food Products</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">Anchal<span>Spices</span></div>
+        <nav class="nav-links">
+            <a href="#home" onclick="filterProducts('all')">Home</a>
+            <a href="#products" onclick="filterProducts('whole')">Whole Spices</a>
+            <a href="#products" onclick="filterProducts('garam')">Garam Masala</a>
+            <a href="#products" onclick="filterProducts('combo')">Combo Packs</a>
+            <a href="#" onclick="openTrackModal()">Track Order</a>
+        </nav>
+        <div class="nav-icons">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search elaichi, masala, kali mirch...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fas fa-shopping-bag"></i>
+                <span id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero" id="home" style="background: linear-gradient(rgba(20, 10, 5, 0.72), rgba(20, 10, 5, 0.68)), url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;">
+        <div class="hero-content">
+            <h4>ANCHAL SPICES AND FOOD PRODUCTS • 100% PURE</h4>
+            <h1>Shuddh Khade Masale, Direct Farm Se</h1>
+            <p>Handpicked aromatic whole spices & authentic Shuddh Khada Garam Masala. Starting at ₹199 (100g) & ₹399 (250g).</p>
+            <a href="#products" class="btn-primary">Shop Whole Spices</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="section-header">
+            <h2>Our Premium Spice Collection</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterProducts('all')">All Spices (8)</button>
+                <button class="filter-btn" onclick="filterProducts('garam')">Garam Masala</button>
+                <button class="filter-btn" onclick="filterProducts('whole')">Whole Spices</button>
+                <button class="filter-btn" onclick="filterProducts('combo')">Combo Packs</button>
+            </div>
+        </div>
+
+        <div class="product-grid" id="product-list"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <h3>Anchal<span>Spices</span></h3>
+            <p>Manufactured & Packed by <strong>Anchal Spices and Food Products</strong></p>
+            <p class="fssai-tag">FSSAI Lic. No.: 227222000084 | 100% Pure & Natural Whole Spices</p>
+            <p class="copyright">© 2026 Anchal Spices and Food Products. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Spice Basket</h3>
+            <i class="fas fa-times" onclick="toggleCart()"></i>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p class="empty-msg">Your basket is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total:</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="checkout-box">
+            <div class="checkout-header">
+                <h3>Complete Your Order</h3>
+                <i class="fas fa-times" onclick="closeCheckout()"></i>
+            </div>
+            <form id="orderForm" onsubmit="placeOrder(event)">
+                <input type="text" id="custName" placeholder="Full Name" required>
+                <input type="tel" id="custPhone" placeholder="Mobile Number (10 digits)" pattern="[0-9]{10}" required>
+                <textarea id="custAddress" rows="3" placeholder="Complete Delivery Address & Pincode" required></textarea>
+                
+                <label class="pay-label">Payment Method:</label>
+                <select id="paymentMethod">
+                    <option value="COD">Cash on Delivery (COD)</option>
+                    <option value="UPI">UPI / GPay / PhonePe</option>
+                </select>
+
+                <div class="order-summary-line">
+                    <span>Payable Amount:</span>
+                    <strong id="modalTotal">₹0</strong>
+                </div>
+
+                <button type="submit" class="place-order-btn">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Tracking Modal -->
+    <div class="modal-overlay" id="trackModal">
+        <div class="checkout-box">
+            <div class="checkout-header">
+                <h3>Track Your Order</h3>
+                <i class="fas fa-times" onclick="closeTrackModal()"></i>
+            </div>
+            <input type="text" id="trackOrderId" placeholder="Enter Order ID (e.g. AS123456)" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid #ddd; border-radius:5px;">
+            <button onclick="checkOrderStatus()" class="place-order-btn">Track Status</button>
+            <div id="trackResult" style="margin-top:15px; font-size:14px; color:#333;"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
