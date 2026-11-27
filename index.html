@@ -6,6 +6,48 @@
     <title>Anchal Spices | Shuddh Khade Masale - Anchal Spices and Food Products</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .profile-btn {
+            display: flex; align-items: center; gap: 8px; background: #801b1b; color: #fff;
+            border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 14px; transition: 0.2s;
+        }
+        .profile-btn:hover { background: #631313; }
+        .profile-btn img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+        .profile-sidebar {
+            position: fixed; top: 0; right: -360px; width: 340px; max-width: 90vw; height: 100vh;
+            background: #fff; box-shadow: -4px 0 20px rgba(0,0,0,0.18); z-index: 2000;
+            transition: right 0.3s ease; display: flex; flex-direction: column; overflow-y: auto;
+        }
+        .profile-sidebar.open { right: 0; }
+        .profile-top { background: linear-gradient(135deg, #801b1b, #4a0e0e); color: #fff; padding: 20px; position: relative; }
+        .profile-close { position: absolute; top: 15px; right: 18px; font-size: 20px; cursor: pointer; color: #fff; }
+        .user-card { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+        .user-avatar {
+            width: 52px; height: 52px; border-radius: 50%; background: #fdf8ee; color: #801b1b;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+            font-weight: bold; overflow: hidden; border: 2px solid #f4a261;
+        }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .google-login-btn {
+            margin-top: 14px; width: 100%; padding: 10px; background: #fff; color: #2b1d14;
+            border: none; border-radius: 6px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .profile-menu-list { list-style: none; padding: 10px 0; margin: 0; flex: 1; }
+        .profile-menu-list li {
+            padding: 14px 20px; border-bottom: 1px solid #f1ece4; display: flex;
+            align-items: center; justify-content: space-between; cursor: pointer;
+            color: #2b1d14; font-weight: 500; transition: 0.2s;
+        }
+        .profile-menu-list li:hover { background: #fdf8ee; color: #801b1b; }
+        .profile-menu-list li span i { width: 24px; color: #801b1b; }
+        .info-box-scroll { max-height: 360px; overflow-y: auto; margin-top: 10px; }
+        .order-history-card {
+            background: #fdf8ee; border: 1px solid #eadcc5; border-left: 4px solid #801b1b;
+            padding: 12px; border-radius: 6px; margin-bottom: 10px; font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
@@ -28,8 +70,64 @@
                 <i class="fas fa-shopping-bag"></i>
                 <span id="cart-count">0</span>
             </div>
+            <button class="profile-btn" id="headerProfileBtn" onclick="toggleProfileMenu()">
+                <i class="fas fa-user-circle"></i>
+                <span id="headerUserName">Account</span>
+            </button>
         </div>
     </header>
+
+    <!-- Flipkart-Style My Profile Drawer -->
+    <div class="profile-sidebar" id="profileSidebar">
+        <div class="profile-top">
+            <i class="fas fa-times profile-close" onclick="toggleProfileMenu()"></i>
+            <small style="opacity:0.85; letter-spacing:0.5px;">ANCHAL SPICES ACCOUNT</small>
+            <div class="user-card">
+                <div class="user-avatar" id="profileAvatar"><i class="fas fa-user"></i></div>
+                <div>
+                    <h4 id="profileName" style="margin:0; font-size:16px;">Welcome, Guest!</h4>
+                    <small id="profileEmail" style="opacity:0.85; font-size:12px;">Login to sync your orders</small>
+                </div>
+            </div>
+            <button class="google-login-btn" id="drawerLoginBtn" onclick="handleGoogleLogin()">
+                <i class="fab fa-google" style="color:#db4437;"></i> Login with Google
+            </button>
+        </div>
+
+        <ul class="profile-menu-list">
+            <li onclick="openMyOrdersModal()">
+                <span><i class="fas fa-box-open"></i> My Orders</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="toggleProfileMenu(); openTrackModal();">
+                <span><i class="fas fa-shipping-fast"></i> Track Live Order</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="openAddressModal()">
+                <span><i class="fas fa-map-marker-alt"></i> Saved Address & Phone</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="openInfoModal('payments')">
+                <span><i class="fas fa-wallet"></i> Payments & UPI Info</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="openInfoModal('about')">
+                <span><i class="fas fa-store"></i> About Anchal Spices</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="openWhatsAppSupport()">
+                <span><i class="fab fa-whatsapp"></i> Help & Customer Support</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li onclick="shareWebsite()">
+                <span><i class="fas fa-share-alt"></i> Share This App / Website</span>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#999;"></i>
+            </li>
+            <li id="drawerLogoutItem" style="display:none; color:#801b1b; font-weight:700;" onclick="handleLogout()">
+                <span><i class="fas fa-sign-out-alt"></i> Logout</span>
+            </li>
+        </ul>
+    </div>
 
     <!-- Hero Banner -->
     <section class="hero" id="home" style="background: linear-gradient(rgba(20, 10, 5, 0.72), rgba(20, 10, 5, 0.68)), url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;">
@@ -125,6 +223,45 @@
         </div>
     </div>
 
+    <!-- My Orders Modal -->
+    <div class="modal-overlay" id="myOrdersModal">
+        <div class="checkout-box">
+            <div class="checkout-header">
+                <h3>My Orders</h3>
+                <i class="fas fa-times" onclick="closeModal('myOrdersModal')"></i>
+            </div>
+            <div id="myOrdersList" class="info-box-scroll"></div>
+        </div>
+    </div>
+
+    <!-- Saved Address Modal -->
+    <div class="modal-overlay" id="addressModal">
+        <div class="checkout-box">
+            <div class="checkout-header">
+                <h3>Saved Delivery Details</h3>
+                <i class="fas fa-times" onclick="closeModal('addressModal')"></i>
+            </div>
+            <form onsubmit="saveUserAddress(event)">
+                <input type="text" id="savedName" placeholder="Your Full Name" required>
+                <input type="tel" id="savedPhone" placeholder="10-Digit Mobile Number" pattern="[0-9]{10}" required>
+                <textarea id="savedAddr" rows="3" placeholder="House No, Street, City, Pincode" required></textarea>
+                <button type="submit" class="place-order-btn">Save Details</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- General Info Modal -->
+    <div class="modal-overlay" id="infoModal">
+        <div class="checkout-box">
+            <div class="checkout-header">
+                <h3 id="infoModalTitle">Information</h3>
+                <i class="fas fa-times" onclick="closeModal('infoModal')"></i>
+            </div>
+            <div id="infoModalBody" style="font-size:14px; line-height:1.6; color:#333;"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <script type="module" src="firebase.js"></script>
 </body>
 </html>

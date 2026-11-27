@@ -1,0 +1,518 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Anchal Spices & Food Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f6f2eb; color: #2b1d14; }
+        
+        /* Login Screen */
+        .login-screen {
+            position: fixed; inset: 0; background: linear-gradient(135deg, #4a0e0e, #801b1b);
+            display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+        }
+        .login-box {
+            background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
+        }
+        .login-box h2 { color: #801b1b; margin-bottom: 6px; }
+        .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
+        .login-box input {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+            margin-bottom: 14px; font-size: 15px;
+        }
+        .login-box button {
+            width: 100%; padding: 12px; background: #801b1b; color: #fff; border: none;
+            border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;
+        }
+
+        /* Top Navbar */
+        .admin-nav {
+            background: #801b1b; color: #fff; padding: 15px 24px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .admin-nav h1 { font-size: 20px; }
+        .admin-nav span { color: #f4a261; }
+        .nav-actions button {
+            background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            padding: 7px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; margin-left: 6px;
+        }
+        .nav-actions button:hover { background: rgba(255,255,255,0.28); }
+
+        /* Main Tabs */
+        .main-tabs {
+            max-width: 1150px; margin: 20px auto 0; padding: 0 16px;
+            display: flex; gap: 10px; border-bottom: 2px solid #e2d8c8;
+        }
+        .tab-btn {
+            padding: 12px 22px; background: #e9e0d1; border: none; border-radius: 8px 8px 0 0;
+            font-weight: 700; font-size: 15px; cursor: pointer; color: #5a4638;
+        }
+        .tab-btn.active { background: #801b1b; color: #fff; }
+
+        .container { max-width: 1150px; margin: 20px auto; padding: 0 16px; }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff; padding: 18px; border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #801b1b;
+        }
+        .stat-card small { color: #777; font-size: 12px; text-transform: uppercase; font-weight: 600; }
+        .stat-card h3 { font-size: 26px; margin-top: 6px; }
+
+        /* Controls */
+        .controls-bar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+        .controls-bar input, .controls-bar select {
+            padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; background: #fff; font-size: 14px;
+        }
+        .controls-bar input { flex: 1; min-width: 220px; }
+
+        /* Cards */
+        .order-card, .prod-admin-card {
+            background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eee;
+            display: grid; grid-template-columns: 2fr 1.2fr; gap: 16px; align-items: center;
+        }
+        .prod-admin-card { grid-template-columns: 80px 2fr 1.3fr; }
+        @media (max-width: 768px) {
+            .order-card, .prod-admin-card { grid-template-columns: 1fr; }
+        }
+        .prod-thumb {
+            width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;
+        }
+        .order-id { background: #fdf8ee; color: #801b1b; font-weight: bold; padding: 4px 10px; border-radius: 4px; border: 1px solid #e6d5b8; }
+        .pay-badge { font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600; background: #e8f5e9; color: #2e7d32; }
+        .stock-badge-in { background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .stock-badge-out { background: #ffebee; color: #c62828; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        .action-box {
+            display: flex; flex-direction: column; gap: 8px; background: #fdfbf7;
+            padding: 12px; border-radius: 8px; border: 1px solid #f0e6d6;
+        }
+        .btn-primary-sm {
+            background: #801b1b; color: #fff; border: none; padding: 9px 14px;
+            border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px;
+        }
+        .btn-wa {
+            flex: 1; background: #25D366; color: #fff; border: none; padding: 8px;
+            border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
+        }
+        .btn-del {
+            background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 8px 10px;
+            border-radius: 5px; cursor: pointer; font-size: 13px;
+        }
+
+        /* Product Edit Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none;
+            align-items: center; justify-content: center; z-index: 3000; padding: 16px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #fff; width: 100%; max-width: 480px; border-radius: 12px;
+            padding: 22px; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #555; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 9px 11px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- Admin Password Lock -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2>Anchal<span>Spices</span> Admin</h2>
+            <p>Store Owner Control Panel</p>
+            <input type="password" id="adminPassInput" placeholder="Admin Password dalein..." onkeypress="if(event.key==='Enter') verifyAdmin()">
+            <button onclick="verifyAdmin()">Dashboard Kholein</button>
+            <p id="loginError" style="color:#d32f2f; margin-top:10px; display:none;">Galat Password! Dobara try karein.</p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardContent" style="display:none;">
+        <header class="admin-nav">
+            <h1>Anchal<span>Spices</span> — Owner Control Panel</h1>
+            <div class="nav-actions">
+                <button onclick="window.open('index.html', '_blank')"><i class="fas fa-store"></i> Live Store</button>
+                <button onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Lock</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="main-tabs">
+            <button class="tab-btn active" id="tabOrdersBtn" onclick="switchTab('orders')"><i class="fas fa-shopping-bag"></i> Customer Orders</button>
+            <button class="tab-btn" id="tabProductsBtn" onclick="switchTab('products')"><i class="fas fa-boxes"></i> Products & Stock</button>
+        </div>
+
+        <!-- TAB 1: ORDERS MANAGEMENT -->
+        <div class="container" id="ordersSection">
+            <div class="stats-grid">
+                <div class="stat-card"><small>Total Orders</small><h3 id="statTotalOrders">0</h3></div>
+                <div class="stat-card" style="border-left-color:#f4a261;"><small>Pending / Active</small><h3 id="statPending">0</h3></div>
+                <div class="stat-card" style="border-left-color:#2a9d8f;"><small>Delivered</small><h3 id="statDelivered">0</h3></div>
+                <div class="stat-card" style="border-left-color:#2e7d32;"><small>Total Revenue</small><h3 id="statRevenue">₹0</h3></div>
+            </div>
+
+            <div class="controls-bar">
+                <input type="text" id="adminSearch" placeholder="Order ID, Customer Name ya Phone se khojein..." onkeyup="renderOrders()">
+                <select id="statusFilter" onchange="renderOrders()">
+                    <option value="ALL">All Orders</option>
+                    <option value="Confirmed">Confirmed / New</option>
+                    <option value="Packed">Packed</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button class="btn-primary-sm" onclick="loadAllOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+
+            <div id="adminOrdersList"></div>
+        </div>
+
+        <!-- TAB 2: PRODUCTS & STOCK MANAGEMENT -->
+        <div class="container" id="productsSection" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h2 style="font-size:19px;">Manage Masale, Prices & Stock</h2>
+                    <small style="color:#666;">Yahan kiya gaya koi bhi badlav turant live website par dikhega</small>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-primary-sm" style="background:#2a9d8f;" onclick="seedDefaultProducts()"><i class="fas fa-upload"></i> Upload Default 8 Spices</button>
+                    <button class="btn-primary-sm" onclick="openProductModal()"><i class="fas fa-plus"></i> + Add New Spice</button>
+                </div>
+            </div>
+
+            <div id="adminProductsList"></div>
+        </div>
+    </div>
+
+    <!-- Add / Edit Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="prodModalTitle">Edit Product</h3>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="closeProductModal()"></i>
+            </div>
+            <form onsubmit="saveProductToDB(event)">
+                <input type="hidden" id="editProdId">
+                
+                <div class="form-group">
+                    <label>Product Name (Masale ka Naam)</label>
+                    <input type="text" id="editProdName" placeholder="e.g. Anchal Shuddh Khada Garam Masala" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Details)</label>
+                    <textarea id="editProdDesc" rows="2" placeholder="100% Pure Whole Spices..." required></textarea>
+                </div>
+
+                <div class="two-col">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="editProdCategory">
+                            <option value="garam">Garam Masala</option>
+                            <option value="whole">Whole Spices</option>
+                            <option value="combo">Combo Packs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Status</label>
+                        <select id="editProdStock">
+                            <option value="true">In Stock (Available)</option>
+                            <option value="false">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Photo Path ya Image URL (e.g. images/1.jpg.jpg ya https://...)</label>
+                    <input type="text" id="editProdImg" placeholder="images/1.jpg.jpg" required>
+                </div>
+
+                <div class="two-col">
+                    <div class="form-group">
+                        <label>Pack 1 Weight (e.g. 100g)</label>
+                        <input type="text" id="editPack1Weight" value="100g" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pack 1 Price (₹)</label>
+                        <input type="number" id="editPack1Price" value="199" required>
+                    </div>
+                </div>
+
+                <div class="two-col">
+                    <div class="form-group">
+                        <label>Pack 2 Weight (e.g. 250g)</label>
+                        <input type="text" id="editPack2Weight" value="250g" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pack 2 Price (₹)</label>
+                        <input type="number" id="editPack2Price" value="399" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-sm" style="width:100%; padding:12px; font-size:15px; margin-top:8px;">Save Changes to Live Website</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsRgHFNnC50A6NymJX9Lv3OGky8Gmht8g",
+            authDomain: "anchal-spices-pro.firebaseapp.com",
+            projectId: "anchal-spices-pro",
+            storageBucket: "anchal-spices-pro.firebasestorage.app",
+            messagingSenderId: "350258523425",
+            appId: "1:350258523425:web:4bbd3dc7f8869a9820e260",
+            measurementId: "G-MY6EFE027N"
+        };
+
+        const ADMIN_PASS = "anchal2026";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let allOrders = [];
+        let allProducts = [];
+
+        // Auth & Tabs
+        window.verifyAdmin = function() {
+            if (document.getElementById('adminPassInput').value === ADMIN_PASS) {
+                sessionStorage.setItem('anchal_admin_auth', 'true');
+                showDashboard();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        };
+        window.adminLogout = function() { sessionStorage.removeItem('anchal_admin_auth'); location.reload(); };
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+            loadAllOrders();
+            loadAllProducts();
+        }
+        if (sessionStorage.getItem('anchal_admin_auth') === 'true') showDashboard();
+
+        window.switchTab = function(tab) {
+            document.getElementById('tabOrdersBtn').classList.toggle('active', tab === 'orders');
+            document.getElementById('tabProductsBtn').classList.toggle('active', tab === 'products');
+            document.getElementById('ordersSection').style.display = tab === 'orders' ? 'block' : 'none';
+            document.getElementById('productsSection').style.display = tab === 'products' ? 'block' : 'none';
+        };
+
+        // ================= ORDERS LOGIC =================
+        window.loadAllOrders = async function() {
+            const listDiv = document.getElementById('adminOrdersList');
+            listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Orders load ho rahe hain...</p>`;
+            const snapshot = await getDocs(collection(db, "orders"));
+            allOrders = [];
+            snapshot.forEach(d => allOrders.push(d.data()));
+            allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            
+            document.getElementById('statTotalOrders').innerText = allOrders.length;
+            const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
+            const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
+            document.getElementById('statDelivered').innerText = delivered;
+            document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
+            const revenue = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+            document.getElementById('statRevenue').innerText = `₹${revenue}`;
+            renderOrders();
+        };
+
+        window.renderOrders = function() {
+            const kw = document.getElementById('adminSearch').value.toLowerCase();
+            const flt = document.getElementById('statusFilter').value;
+            const listDiv = document.getElementById('adminOrdersList');
+            const filtered = allOrders.filter(o => 
+                ((o.id||'').toLowerCase().includes(kw) || (o.name||'').toLowerCase().includes(kw) || (o.phone||'').includes(kw)) &&
+                (flt === 'ALL' || (o.status||'').includes(flt))
+            );
+            if (!filtered.length) return listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Koi order nahi mila.</p>`;
+
+            listDiv.innerHTML = filtered.map(o => {
+                const waMsg = encodeURIComponent(`Namaste ${o.name}! Aapka Anchal Spices Order (${o.id}) ka status update hua hai: *${o.status}*. Dhanyawad!`);
+                return `
+                    <div class="order-card">
+                        <div>
+                            <div style="display:flex; gap:10px; margin-bottom:8px;">
+                                <span class="order-id">${o.id}</span>
+                                <span class="pay-badge">${o.payment || 'COD'} — ₹${o.total}</span>
+                            </div>
+                            <p><strong>Customer:</strong> ${o.name} | <strong>Phone:</strong> <a href="tel:${o.phone}">${o.phone}</a></p>
+                            <p><strong>Address:</strong> ${o.address}</p>
+                            <div style="background:#faf7f2; padding:8px; border-radius:6px; font-weight:600; margin-top:6px;">${o.items}</div>
+                        </div>
+                        <div class="action-box">
+                            <label style="font-size:12px; font-weight:bold;">Order Status:</label>
+                            <select style="padding:8px; border-radius:5px;" onchange="changeOrderStatus('${o.id}', this.value)">
+                                <option value="Order Confirmed & Freshly Packed by Anchal Spices" ${o.status.includes('Confirmed')?'selected':''}>1. Order Confirmed</option>
+                                <option value="Packed & Ready for Dispatch" ${o.status.includes('Packed & Ready')?'selected':''}>2. Packed & Ready</option>
+                                <option value="Shipped / Out for Delivery" ${o.status.includes('Out for Delivery')?'selected':''}>3. Out for Delivery</option>
+                                <option value="Delivered Successfully" ${o.status.includes('Delivered')?'selected':''}>4. Delivered</option>
+                                <option value="Cancelled" ${o.status.includes('Cancelled')?'selected':''}>5. Cancelled</option>
+                            </select>
+                            <div style="display:flex; gap:8px;">
+                                <a class="btn-wa" href="https://wa.me/91${o.phone}?text=${waMsg}" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                                <button class="btn-del" onclick="deleteOrder('${o.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        window.changeOrderStatus = async function(id, status) {
+            await updateDoc(doc(db, "orders", id), { status });
+            loadAllOrders();
+            alert(`Status updated: ${status}`);
+        };
+        window.deleteOrder = async function(id) {
+            if (confirm(`Delete Order ${id}?`)) { await deleteDoc(doc(db, "orders", id)); loadAllOrders(); }
+        };
+
+        // ================= PRODUCTS & STOCK LOGIC =================
+        window.loadAllProducts = async function() {
+            const listDiv = document.getElementById('adminProductsList');
+            listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Products load ho rahe hain...</p>`;
+            const snapshot = await getDocs(collection(db, "products"));
+            allProducts = [];
+            snapshot.forEach(d => allProducts.push(d.data()));
+            allProducts.sort((a, b) => Number(a.id) - Number(b.id));
+
+            if (allProducts.length === 0) {
+                listDiv.innerHTML = `
+                    <div style="background:#fff; padding:30px; text-align:center; border-radius:10px;">
+                        <p style="margin-bottom:12px;">Abhi Database mein koi product nahi hai. Pehle upar <strong>"Upload Default 8 Spices"</strong> button par click karein taaki aapke saare 8 masale database mein aa jayein!</p>
+                    </div>`;
+                return;
+            }
+
+            listDiv.innerHTML = allProducts.map(p => {
+                const inStock = p.inStock !== false;
+                const packsText = (p.packs || []).map(pk => `${pk.weight}: ₹${pk.price}`).join(' | ');
+                return `
+                    <div class="prod-admin-card">
+                        <img src="${p.img}" class="prod-thumb" onerror="this.src='https://via.placeholder.com/80?text=Spice'">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+                                <strong>#${p.id} — ${p.name}</strong>
+                                <span class="${inStock ? 'stock-badge-in' : 'stock-badge-out'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
+                            </div>
+                            <p style="font-size:13px; color:#666; margin-bottom:6px;">${p.desc}</p>
+                            <div style="font-size:13px; font-weight:bold; color:#801b1b;">${packsText} <span style="color:#777; font-weight:normal;">(Category: ${p.category})</span></div>
+                        </div>
+                        <div class="action-box">
+                            <button class="btn-primary-sm" onclick="openProductModal('${p.id}')"><i class="fas fa-edit"></i> Edit Name / Price / Photo</button>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-primary-sm" style="flex:1; background:${inStock ? '#e65100' : '#2e7d32'};" onclick="toggleProductStock('${p.id}', ${!inStock})">
+                                    ${inStock ? 'Mark Out of Stock' : 'Mark In Stock'}
+                                </button>
+                                <button class="btn-del" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        window.toggleProductStock = async function(id, newStockState) {
+            await updateDoc(doc(db, "products", String(id)), { inStock: newStockState });
+            loadAllProducts();
+        };
+
+        window.deleteProduct = async function(id) {
+            if (confirm("Kya aap sach mein is product ko delete karna chahte hain?")) {
+                await deleteDoc(doc(db, "products", String(id)));
+                loadAllProducts();
+            }
+        };
+
+        window.openProductModal = function(prodId = null) {
+            const modal = document.getElementById('productModal');
+            if (prodId) {
+                const p = allProducts.find(item => String(item.id) === String(prodId));
+                document.getElementById('prodModalTitle').innerText = `Edit Product #${p.id}`;
+                document.getElementById('editProdId').value = p.id;
+                document.getElementById('editProdName').value = p.name;
+                document.getElementById('editProdDesc').value = p.desc;
+                document.getElementById('editProdCategory').value = p.category;
+                document.getElementById('editProdStock').value = p.inStock !== false ? "true" : "false";
+                document.getElementById('editProdImg').value = p.img;
+                document.getElementById('editPack1Weight').value = p.packs[0]?.weight || "100g";
+                document.getElementById('editPack1Price').value = p.packs[0]?.price || 199;
+                document.getElementById('editPack2Weight').value = p.packs[1]?.weight || "250g";
+                document.getElementById('editPack2Price').value = p.packs[1]?.price || 399;
+            } else {
+                const nextId = allProducts.length > 0 ? Math.max(...allProducts.map(x => Number(x.id))) + 1 : 1;
+                document.getElementById('prodModalTitle').innerText = "Add New Spice Product";
+                document.getElementById('editProdId').value = nextId;
+                document.getElementById('editProdName').value = "";
+                document.getElementById('editProdDesc').value = "";
+                document.getElementById('editProdCategory').value = "garam";
+                document.getElementById('editProdStock').value = "true";
+                document.getElementById('editProdImg').value = "images/1.jpg.jpg";
+                document.getElementById('editPack1Weight').value = "100g";
+                document.getElementById('editPack1Price').value = 199;
+                document.getElementById('editPack2Weight').value = "250g";
+                document.getElementById('editPack2Price').value = 399;
+            }
+            modal.classList.add('active');
+        };
+
+        window.closeProductModal = function() { document.getElementById('productModal').classList.remove('active'); };
+
+        window.saveProductToDB = async function(e) {
+            e.preventDefault();
+            const id = Number(document.getElementById('editProdId').value);
+            const productData = {
+                id: id,
+                name: document.getElementById('editProdName').value,
+                desc: document.getElementById('editProdDesc').value,
+                category: document.getElementById('editProdCategory').value,
+                inStock: document.getElementById('editProdStock').value === "true",
+                img: document.getElementById('editProdImg').value,
+                packs: [
+                    { weight: document.getElementById('editPack1Weight').value, price: Number(document.getElementById('editPack1Price').value) },
+                    { weight: document.getElementById('editPack2Weight').value, price: Number(document.getElementById('editPack2Price').value) }
+                ]
+            };
+            await setDoc(doc(db, "products", String(id)), productData);
+            closeProductModal();
+            loadAllProducts();
+            alert("Product save ho gaya! Live website par turant update ho chuka hai.");
+        };
+
+        // One-Click Upload Default 8 Products to Firestore
+        window.seedDefaultProducts = async function() {
+            const defaults = [
+                { id: 1, name: "Anchal Shuddh Khada Garam Masala (Zipper Pouch)", desc: "100% Pure Whole Spices: Dalchini, Hari & Badi Elaichi, Laung, Kali Mirch, Javitri & Jeera", category: "garam", img: "images/1.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "250g", price: 399 }] },
+                { id: 2, name: "Anchal BPM Shuddh Khada Garam Masala", desc: "Authentic Indian Kitchen Blend for Rich Aroma & Traditional Taste", category: "garam", img: "images/2.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "250g", price: 399 }] },
+                { id: 3, name: "Anchal Farm-Fresh Whole Garam Masala Mix", desc: "Handpicked Unpolished Whole Spices Packed in Airtight Pouch", category: "garam", img: "images/3.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "250g", price: 399 }] },
+                { id: 4, name: "Anchal Royal Black Edition Khada Garam Masala", desc: "Bharat ka Asli Swad - Premium Export Quality Whole Spices Blend", category: "garam", img: "images/4.jpg.jpeg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "250g", price: 399 }] },
+                { id: 5, name: "Anchal Premium Green Cardamom (Hari Elaichi)", desc: "Bold Aromatic Whole Green Cardamom Pods, Direct From Farm", category: "whole", img: "images/5.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "50g", price: 99 }] },
+                { id: 6, name: "Anchal Sabut Kali Mirch (Whole Black Pepper)", desc: "Bold, Strong & Sun-Dried Pure Black Peppercorns", category: "whole", img: "images/6.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 399 }, { weight: "50g", price: 199 }] },
+                { id: 7, name: "Anchal Classic Khada Garam Masala Pack", desc: "Pure Whole Cinnamon, Cardamom, Star Anise, Cloves & Poppy Seeds", category: "garam", img: "images/7.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "50g", price: 99 }] },
+                { id: 8, name: "Anchal Value Saver Combo (Pack of 2)", desc: "Double Pack of Shuddh Khada Garam Masala for Family Kitchens", category: "combo", img: "images/8.jpg.jpg", inStock: true, packs: [{ weight: "250g x 2 Pack", price: 749 }, { weight: "250g x 1 Pack", price: 399 }] }
+            ];
+            for (const p of defaults) {
+                await setDoc(doc(db, "products", String(p.id)), p);
+            }
+            loadAllProducts();
+            alert("Saare 8 default masale Database mein upload ho gaye hain!");
+        };
+    </script>
+</body>
+</html>
