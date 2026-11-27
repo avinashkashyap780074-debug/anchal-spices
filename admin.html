@@ -298,7 +298,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAsRgHFNnC50A6NymJX9Lv3OGky8Gmht8g",
@@ -348,22 +348,23 @@
             document.getElementById('productsSection').style.display = tab === 'products' ? 'block' : 'none';
         };
 
-        window.loadAllOrders = async function() {
+        window.loadAllOrders = function() {
             const listDiv = document.getElementById('adminOrdersList');
-            listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Loading orders...</p>`;
-            const snap = await getDocs(collection(db, "orders"));
-            allOrders = [];
-            snap.forEach(d => allOrders.push(d.data()));
-            allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Syncing live orders...</p>`;
+            onSnapshot(collection(db, "orders"), (snap) => {
+                allOrders = [];
+                snap.forEach(d => allOrders.push(d.data()));
+                allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-            document.getElementById('statTotalOrders').innerText = allOrders.length;
-            const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
-            const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
-            document.getElementById('statDelivered').innerText = delivered;
-            document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
-            const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
-            document.getElementById('statRevenue').innerText = `₹${rev}`;
-            renderOrders();
+                document.getElementById('statTotalOrders').innerText = allOrders.length;
+                const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
+                const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
+                document.getElementById('statDelivered').innerText = delivered;
+                document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
+                const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+                document.getElementById('statRevenue').innerText = `₹${rev}`;
+                renderOrders();
+            });
         };
 
         window.renderOrders = function() {
@@ -409,10 +410,9 @@
 
         window.changeOrderStatus = async function(id, status) {
             await updateDoc(doc(db, "orders", id), { status });
-            loadAllOrders();
         };
         window.deleteOrder = async function(id) {
-            if (confirm(`Delete order ${id} permanently?`)) { await deleteDoc(doc(db, "orders", id)); loadAllOrders(); }
+            if (confirm(`Delete order ${id} permanently?`)) { await deleteDoc(doc(db, "orders", id)); }
         };
 
         window.loadAllProducts = async function() {
