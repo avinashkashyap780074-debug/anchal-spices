@@ -296,25 +296,49 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAsRgHFNnC50A6NymJX9Lv3OGky8Gmht8g",
-            authDomain: "anchal-spices-pro.firebaseapp.com",
-            projectId: "anchal-spices-pro",
-            storageBucket: "anchal-spices-pro.firebasestorage.app",
-            messagingSenderId: "350258523425",
-            appId: "1:350258523425:web:4bbd3dc7f8869a9820e260",
-            measurementId: "G-MY6EFE027N"
-        };
-
+    <script>
+        const PROJECT_ID = "anchal-spices-pro";
+        const FIRESTORE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
         const ADMIN_PASS = "anchal2026";
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        let allOrders = [], allProducts = [];
-        let unsubscribeOrders = null;
+
+        let allOrders = [];
+        let allProducts = [];
+
+        function parseFirestoreDoc(docObj) {
+            const fields = docObj.fields || {};
+            const res = {};
+            for (const [k, v] of Object.entries(fields)) {
+                if (v.stringValue !== undefined) res[k] = v.stringValue;
+                else if (v.integerValue !== undefined) res[k] = Number(v.integerValue);
+                else if (v.doubleValue !== undefined) res[k] = Number(v.doubleValue);
+                else if (v.booleanValue !== undefined) res[k] = v.booleanValue;
+                else if (v.timestampValue !== undefined) res[k] = { seconds: Math.floor(new Date(v.timestampValue).getTime() / 1000) };
+                else if (v.arrayValue !== undefined) {
+                    res[k] = (v.arrayValue.values || []).map(item => {
+                        if (item.mapValue) return parseFirestoreDoc(item.mapValue);
+                        return item.stringValue || Number(item.integerValue || 0);
+                    });
+                }
+            }
+            return res;
+        }
+
+        function toFirestoreFields(obj) {
+            const fields = {};
+            for (const [k, v] of Object.entries(obj)) {
+                if (typeof v === 'string') fields[k] = { stringValue: v };
+                else if (typeof v === 'number') fields[k] = Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+                else if (typeof v === 'boolean') fields[k] = { booleanValue: v };
+                else if (Array.isArray(v)) {
+                    fields[k] = {
+                        arrayValue: {
+                            values: v.map(item => ({ mapValue: { fields: toFirestoreFields(item) } }))
+                        }
+                    };
+                }
+            }
+            return fields;
+        }
 
         window.togglePass = function() {
             const inp = document.getElementById('adminPassInput');
@@ -332,7 +356,11 @@
                 document.getElementById('loginError').style.display = 'block';
             }
         };
-        window.adminLogout = function() { sessionStorage.removeItem('anchal_admin_auth'); location.reload(); };
+
+        window.adminLogout = function() {
+            sessionStorage.removeItem('anchal_admin_auth');
+            location.reload();
+        };
 
         function showDashboard() {
             document.getElementById('loginScreen').style.display = 'none';
@@ -340,7 +368,16 @@
             loadAllOrders();
             loadAllProducts();
         }
-        if (sessionStorage.getItem('anchal_admin_auth') === 'true') showDashboard();
+
+        if (sessionStorage.getItem('anchal_admin_auth') === 'true') {
+            showDashboard();
+        }
+
+        setInterval(() => {
+            if (sessionStorage.getItem('anchal_admin_auth') === 'true') {
+                loadAllOrders(true);
+            }
+        }, 12000);
 
         window.switchTab = function(tab) {
             document.getElementById('tabOrdersBtn').classList.toggle('active', tab === 'orders');
@@ -351,46 +388,38 @@
 
         function updateOrderStatsAndRender() {
             document.getElementById('statTotalOrders').innerText = allOrders.length;
-            const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
-            const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
+            const delivered = allOrders.filter(o => (o.status || '').includes('Delivered')).length;
+            const cancelled = allOrders.filter(o => (o.status || '').includes('Cancelled')).length;
             document.getElementById('statDelivered').innerText = delivered;
             document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
-            const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+            const rev = allOrders.filter(o => !(o.status || '').includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
             document.getElementById('statRevenue').innerText = `₹${rev}`;
             renderOrders();
         }
 
-        window.loadAllOrders = async function() {
+        window.loadAllOrders = async function(isSilent = false) {
             const listDiv = document.getElementById('adminOrdersList');
             const cached = JSON.parse(localStorage.getItem('anchal_admin_orders_cache') || '[]');
+            
             if (cached.length > 0 && allOrders.length === 0) {
                 allOrders = cached;
                 updateOrderStatsAndRender();
-            } else if (allOrders.length === 0) {
-                listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Syncing live orders...</p>`;
+            } else if (!isSilent && allOrders.length === 0) {
+                listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Loading orders...</p>`;
             }
 
             try {
-                const snap = await getDocs(collection(db, "orders"));
-                const freshOrders = [];
-                snap.forEach(d => freshOrders.push(d.data()));
+                const res = await fetch(`${FIRESTORE_URL}/orders?pageSize=200&_t=${Date.now()}`, { cache: 'no-store' });
+                const data = await res.json();
+                const freshOrders = (data.documents || []).map(parseFirestoreDoc);
                 freshOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
                 allOrders = freshOrders;
                 localStorage.setItem('anchal_admin_orders_cache', JSON.stringify(allOrders));
                 updateOrderStatsAndRender();
             } catch (e) {
-                console.error("Direct fetch error:", e);
+                console.error("Orders fetch failed:", e);
             }
-
-            if (unsubscribeOrders) unsubscribeOrders();
-            unsubscribeOrders = onSnapshot(collection(db, "orders"), (snap) => {
-                const liveOrders = [];
-                snap.forEach(d => liveOrders.push(d.data()));
-                liveOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                allOrders = liveOrders;
-                localStorage.setItem('anchal_admin_orders_cache', JSON.stringify(allOrders));
-                updateOrderStatsAndRender();
-            });
         };
 
         window.renderOrders = function() {
@@ -419,11 +448,11 @@
                         <div class="action-panel">
                             <label style="font-size:11.5px; font-weight:600; color:#4b5563;">FULFILLMENT STATUS</label>
                             <select onchange="changeOrderStatus('${o.id}', this.value)">
-                                <option value="Order Confirmed & Freshly Packed by Anchal Spices" ${o.status.includes('Confirmed')?'selected':''}>1. Order Confirmed</option>
-                                <option value="Packed & Ready for Dispatch" ${o.status.includes('Packed & Ready')?'selected':''}>2. Packed & Ready</option>
-                                <option value="Shipped / Out for Delivery" ${o.status.includes('Out for Delivery')?'selected':''}>3. Out for Delivery</option>
-                                <option value="Delivered Successfully" ${o.status.includes('Delivered')?'selected':''}>4. Delivered</option>
-                                <option value="Cancelled" ${o.status.includes('Cancelled')?'selected':''}>5. Cancelled</option>
+                                <option value="Order Confirmed & Freshly Packed by Anchal Spices" ${(o.status||'').includes('Confirmed')?'selected':''}>1. Order Confirmed</option>
+                                <option value="Packed & Ready for Dispatch" ${(o.status||'').includes('Packed & Ready')?'selected':''}>2. Packed & Ready</option>
+                                <option value="Shipped / Out for Delivery" ${(o.status||'').includes('Out for Delivery')?'selected':''}>3. Out for Delivery</option>
+                                <option value="Delivered Successfully" ${(o.status||'').includes('Delivered')?'selected':''}>4. Delivered</option>
+                                <option value="Cancelled" ${(o.status||'').includes('Cancelled')?'selected':''}>5. Cancelled</option>
                             </select>
                             <div style="display:flex; gap:8px;">
                                 <a class="btn btn-wa" href="https://wa.me/91${o.phone}?text=${msg}" target="_blank"><i class="fab fa-whatsapp"></i> Notify</a>
@@ -435,18 +464,31 @@
         };
 
         window.changeOrderStatus = async function(id, status) {
-            await updateDoc(doc(db, "orders", id), { status });
+            await fetch(`${FIRESTORE_URL}/orders/${id}?updateMask.fieldPaths=status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fields: { status: { stringValue: status } } })
+            });
+            loadAllOrders();
         };
+
         window.deleteOrder = async function(id) {
-            if (confirm(`Delete order ${id} permanently?`)) { await deleteDoc(doc(db, "orders", id)); }
+            if (confirm(`Delete order ${id} permanently?`)) {
+                await fetch(`${FIRESTORE_URL}/orders/${id}`, { method: 'DELETE' });
+                loadAllOrders();
+            }
         };
 
         window.loadAllProducts = async function() {
             const listDiv = document.getElementById('adminProductsList');
-            const snap = await getDocs(collection(db, "products"));
-            allProducts = [];
-            snap.forEach(d => allProducts.push(d.data()));
-            allProducts.sort((a, b) => Number(a.id) - Number(b.id));
+            try {
+                const res = await fetch(`${FIRESTORE_URL}/products?pageSize=100&_t=${Date.now()}`, { cache: 'no-store' });
+                const data = await res.json();
+                allProducts = (data.documents || []).map(parseFirestoreDoc);
+                allProducts.sort((a, b) => Number(a.id) - Number(b.id));
+            } catch (e) {
+                console.error(e);
+            }
 
             if (!allProducts.length) {
                 listDiv.innerHTML = `<div style="background:#fff; padding:28px; text-align:center; border-radius:10px; border:1px solid #e5e7eb;">No products in database yet. Click <strong>"Import 8 Default Spices"</strong> above to populate your catalog.</div>`;
@@ -481,11 +523,19 @@
         };
 
         window.toggleProductStock = async function(id, state) {
-            await updateDoc(doc(db, "products", String(id)), { inStock: state });
+            await fetch(`${FIRESTORE_URL}/products/${id}?updateMask.fieldPaths=inStock`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fields: { inStock: { booleanValue: state } } })
+            });
             loadAllProducts();
         };
+
         window.deleteProduct = async function(id) {
-            if (confirm("Delete this product from the live store?")) { await deleteDoc(doc(db, "products", String(id))); loadAllProducts(); }
+            if (confirm("Delete this product from the live store?")) {
+                await fetch(`${FIRESTORE_URL}/products/${id}`, { method: 'DELETE' });
+                loadAllProducts();
+            }
         };
 
         window.openProductModal = function(prodId = null) {
@@ -524,7 +574,7 @@
         window.saveProductToDB = async function(e) {
             e.preventDefault();
             const id = Number(document.getElementById('editProdId').value);
-            await setDoc(doc(db, "products", String(id)), {
+            const payload = {
                 id,
                 name: document.getElementById('editProdName').value,
                 desc: document.getElementById('editProdDesc').value,
@@ -535,6 +585,11 @@
                     { weight: document.getElementById('editPack1Weight').value, price: Number(document.getElementById('editPack1Price').value) },
                     { weight: document.getElementById('editPack2Weight').value, price: Number(document.getElementById('editPack2Price').value) }
                 ]
+            };
+            await fetch(`${FIRESTORE_URL}/products/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fields: toFirestoreFields(payload) })
             });
             closeProductModal();
             loadAllProducts();
@@ -551,7 +606,13 @@
                 { id: 7, name: "Anchal Classic Khada Garam Masala Pack", desc: "Pure Whole Cinnamon, Cardamom, Star Anise, Cloves & Poppy Seeds", category: "garam", img: "images/7.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "50g", price: 99 }] },
                 { id: 8, name: "Anchal Value Saver Combo (Pack of 2)", desc: "Double Pack of Shuddh Khada Garam Masala for Family Kitchens", category: "combo", img: "images/8.jpg.jpg", inStock: true, packs: [{ weight: "250g x 2 Pack", price: 749 }, { weight: "250g x 1 Pack", price: 399 }] }
             ];
-            for (const p of defaults) await setDoc(doc(db, "products", String(p.id)), p);
+            for (const p of defaults) {
+                await fetch(`${FIRESTORE_URL}/products/${p.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fields: toFirestoreFields(p) })
+                });
+            }
             loadAllProducts();
             alert("All 8 default spices have been imported to the database.");
         };
