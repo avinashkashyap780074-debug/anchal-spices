@@ -21,7 +21,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: var(--bg-body); color: var(--text-dark); }
 
-        /* Login Screen */
         .login-screen {
             position: fixed; inset: 0;
             background: linear-gradient(145deg, #111827 0%, #29131b 100%);
@@ -49,46 +48,37 @@
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
             cursor: pointer; color: var(--text-muted); font-size: 15px;
         }
-        .pass-wrap i:hover { color: var(--text-dark); }
-
         .btn-login {
             width: 100%; padding: 12px; background: var(--brand); color: #fff; border: none;
-            border-radius: 8px; font-weight: 600; font-size: 14.5px; cursor: pointer; transition: 0.2s;
+            border-radius: 8px; font-weight: 600; font-size: 14.5px; cursor: pointer;
         }
-        .btn-login:hover { background: var(--brand-dark); }
         .err-msg { display: none; color: #b91c1c; background: #fef2f2; padding: 8px; border-radius: 6px; font-size: 12.5px; margin-top: 12px; }
 
-        /* Top Navbar */
         .topbar {
             background: var(--nav-dark); color: #fff; padding: 14px 28px;
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
         }
         .brand-title { display: flex; align-items: center; gap: 10px; }
-        .brand-title h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .brand-title h1 { font-size: 18px; font-weight: 700; }
         .brand-title h1 span { color: #f59e0b; }
         .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; }
         .nav-btns { display: flex; gap: 8px; }
         .nav-btns button {
             background: rgba(255,255,255,0.08); color: #e5e7eb; border: 1px solid rgba(255,255,255,0.14);
-            padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; transition: 0.2s;
+            padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer;
         }
-        .nav-btns button:hover { background: rgba(255,255,255,0.16); color: #fff; }
 
-        /* Sub Navigation Tabs */
         .subnav {
             background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0 28px;
             display: flex; gap: 24px;
         }
         .tab-btn {
             padding: 14px 4px; background: none; border: none; border-bottom: 2.5px solid transparent;
-            font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.2s;
+            font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer;
         }
-        .tab-btn:hover { color: var(--text-dark); }
         .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
 
         .container { max-width: 1140px; margin: 24px auto; padding: 0 20px; }
-
-        /* Refined KPI Cards */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 22px; }
         .kpi-card {
             background: var(--bg-card); padding: 18px 20px; border-radius: 10px;
@@ -97,19 +87,16 @@
         .kpi-card.gold { border-top-color: var(--gold); }
         .kpi-card.emerald { border-top-color: var(--emerald); }
         .kpi-card.brand { border-top-color: var(--brand); }
-        .kpi-card small { color: var(--text-muted); font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-card small { color: var(--text-muted); font-size: 11.5px; font-weight: 600; text-transform: uppercase; }
         .kpi-card h3 { font-size: 25px; font-weight: 700; margin-top: 6px; }
 
-        /* Controls Bar */
         .toolbar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
         .toolbar input, .toolbar select {
             padding: 10px 13px; border: 1px solid var(--border); border-radius: 8px;
             background: var(--bg-card); font-size: 13.5px; outline: none;
         }
-        .toolbar input:focus, .toolbar select:focus { border-color: var(--brand); }
         .toolbar input { flex: 1; min-width: 220px; }
 
-        /* Cards */
         .item-card {
             background: var(--bg-card); border-radius: 10px; padding: 18px; margin-bottom: 12px;
             border: 1px solid var(--border); display: grid; grid-template-columns: 2fr 1.15fr; gap: 18px; align-items: center;
@@ -128,50 +115,37 @@
             background: #f9fafb; border: 1px solid var(--border); padding: 9px 12px;
             border-radius: 6px; font-size: 13px; font-weight: 600; margin-top: 8px; color: #374151;
         }
-
         .action-panel {
             background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
             display: flex; flex-direction: column; gap: 8px;
         }
         .action-panel select { padding: 8px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px; background: #fff; }
 
-        /* Clean Buttons */
         .btn {
             padding: 8px 14px; border-radius: 7px; border: none; font-size: 13px; font-weight: 600;
-            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: 0.15s;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
         }
         .btn-brand { background: var(--brand); color: #fff; }
-        .btn-brand:hover { background: var(--brand-dark); }
         .btn-dark { background: var(--nav-dark); color: #fff; }
         .btn-outline { background: #fff; color: var(--text-dark); border: 1px solid #d1d5db; }
-        .btn-outline:hover { background: #f3f4f6; }
         .btn-wa { background: #15803d; color: #fff; flex: 1; }
         .btn-del { background: #fff; color: #b91c1c; border: 1px solid #fecaca; padding: 8px 11px; }
-        .btn-del:hover { background: #fef2f2; }
 
-        /* Modal */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); display: none;
             align-items: center; justify-content: center; z-index: 3000; padding: 16px;
         }
         .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #fff; width: 100%; max-width: 470px; border-radius: 12px;
-            padding: 22px; max-height: 90vh; overflow-y: auto;
-        }
+        .modal-box { background: #fff; width: 100%; max-width: 470px; border-radius: 12px; padding: 22px; max-height: 90vh; overflow-y: auto; }
         .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
         .form-grp { margin-bottom: 12px; }
         .form-grp label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
-        .form-grp input, .form-grp select, .form-grp textarea {
-            width: 100%; padding: 9px 11px; border: 1px solid #d1d5db; border-radius: 7px; font-size: 13.5px; outline: none;
-        }
-        .form-grp input:focus, .form-grp select:focus, .form-grp textarea:focus { border-color: var(--brand); }
+        .form-grp input, .form-grp select, .form-grp textarea { width: 100%; padding: 9px 11px; border: 1px solid #d1d5db; border-radius: 7px; font-size: 13.5px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <div class="login-badge"><i class="fas fa-lock"></i></div>
@@ -186,12 +160,11 @@
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <div id="dashboardContent" style="display:none;">
         <header class="topbar">
             <div class="brand-title">
                 <h1>Anchal<span>Spices</span> Console</h1>
-                <span style="font-size:12px; color:#9ca3af;"><span class="status-dot"></span> Live Sync</span>
+                <span style="font-size:12px; color:#9ca3af;"><span class="status-dot"></span> Live Sync v2</span>
             </div>
             <div class="nav-btns">
                 <button onclick="window.open('index.html', '_blank')"><i class="fas fa-external-link-alt"></i> Live Store</button>
@@ -204,7 +177,6 @@
             <button class="tab-btn" id="tabProductsBtn" onclick="switchTab('products')">Products & Stock</button>
         </nav>
 
-        <!-- TAB 1: ORDERS -->
         <div class="container" id="ordersSection">
             <div class="stats-grid">
                 <div class="kpi-card"><small>Total Orders</small><h3 id="statTotalOrders">0</h3></div>
@@ -229,7 +201,6 @@
             <div id="adminOrdersList"></div>
         </div>
 
-        <!-- TAB 2: PRODUCTS -->
         <div class="container" id="productsSection" style="display:none;">
             <div class="toolbar" style="justify-content:space-between; align-items:center;">
                 <div>
@@ -245,7 +216,6 @@
         </div>
     </div>
 
-    <!-- Product Modal -->
     <div class="modal-overlay" id="productModal">
         <div class="modal-box">
             <div class="modal-head">
@@ -254,14 +224,8 @@
             </div>
             <form onsubmit="saveProductToDB(event)">
                 <input type="hidden" id="editProdId">
-                <div class="form-grp">
-                    <label>Product Name</label>
-                    <input type="text" id="editProdName" required>
-                </div>
-                <div class="form-grp">
-                    <label>Description</label>
-                    <textarea id="editProdDesc" rows="2" required></textarea>
-                </div>
+                <div class="form-grp"><label>Product Name</label><input type="text" id="editProdName" required></div>
+                <div class="form-grp"><label>Description</label><textarea id="editProdDesc" rows="2" required></textarea></div>
                 <div class="grid-2">
                     <div class="form-grp">
                         <label>Category</label>
@@ -279,10 +243,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-grp">
-                    <label>Image Path or URL</label>
-                    <input type="text" id="editProdImg" required>
-                </div>
+                <div class="form-grp"><label>Image Path or URL</label><input type="text" id="editProdImg" required></div>
                 <div class="grid-2">
                     <div class="form-grp"><label>Pack 1 Weight</label><input type="text" id="editPack1Weight" value="100g" required></div>
                     <div class="form-grp"><label>Pack 1 Price (₹)</label><input type="number" id="editPack1Price" value="199" required></div>
@@ -296,48 +257,55 @@
         </div>
     </div>
 
-    <script>
-        const PROJECT_ID = "anchal-spices-pro";
-        const FIRESTORE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsRgHFNnC50A6NymJX9Lv3OGky8Gmht8g",
+            authDomain: "anchal-spices-pro.firebaseapp.com",
+            projectId: "anchal-spices-pro",
+            storageBucket: "anchal-spices-pro.firebasestorage.app",
+            messagingSenderId: "350258523425",
+            appId: "1:350258523425:web:4bbd3dc7f8869a9820e260",
+            measurementId: "G-MY6EFE027N"
+        };
+
         const ADMIN_PASS = "anchal2026";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let allOrders = [], allProducts = [];
 
-        let allOrders = [];
-        let allProducts = [];
-
-        function parseFirestoreDoc(docObj) {
-            const fields = docObj.fields || {};
-            const res = {};
-            for (const [k, v] of Object.entries(fields)) {
-                if (v.stringValue !== undefined) res[k] = v.stringValue;
-                else if (v.integerValue !== undefined) res[k] = Number(v.integerValue);
-                else if (v.doubleValue !== undefined) res[k] = Number(v.doubleValue);
-                else if (v.booleanValue !== undefined) res[k] = v.booleanValue;
-                else if (v.timestampValue !== undefined) res[k] = { seconds: Math.floor(new Date(v.timestampValue).getTime() / 1000) };
-                else if (v.arrayValue !== undefined) {
-                    res[k] = (v.arrayValue.values || []).map(item => {
-                        if (item.mapValue) return parseFirestoreDoc(item.mapValue);
-                        return item.stringValue || Number(item.integerValue || 0);
-                    });
-                }
-            }
-            return res;
+        // STEP 1: Render cached data IMMEDIATELY on page boot (before Firebase even connects)
+        function paintOrders(ordersArray) {
+            document.getElementById('statTotalOrders').innerText = ordersArray.length;
+            const delivered = ordersArray.filter(o => (o.status || '').includes('Delivered')).length;
+            const cancelled = ordersArray.filter(o => (o.status || '').includes('Cancelled')).length;
+            document.getElementById('statDelivered').innerText = delivered;
+            document.getElementById('statPending').innerText = ordersArray.length - delivered - cancelled;
+            const rev = ordersArray.filter(o => !(o.status || '').includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+            document.getElementById('statRevenue').innerText = `₹${rev}`;
+            renderOrders();
         }
 
-        function toFirestoreFields(obj) {
-            const fields = {};
-            for (const [k, v] of Object.entries(obj)) {
-                if (typeof v === 'string') fields[k] = { stringValue: v };
-                else if (typeof v === 'number') fields[k] = Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
-                else if (typeof v === 'boolean') fields[k] = { booleanValue: v };
-                else if (Array.isArray(v)) {
-                    fields[k] = {
-                        arrayValue: {
-                            values: v.map(item => ({ mapValue: { fields: toFirestoreFields(item) } }))
-                        }
-                    };
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+
+            try {
+                const cached = JSON.parse(localStorage.getItem('anchal_orders_v2') || '[]');
+                if (cached.length > 0) {
+                    allOrders = cached;
+                    paintOrders(allOrders);
                 }
-            }
-            return fields;
+            } catch (e) {}
+
+            loadAllOrders();
+            loadAllProducts();
+        }
+
+        if (sessionStorage.getItem('anchal_admin_auth') === 'true') {
+            showDashboard();
         }
 
         window.togglePass = function() {
@@ -362,23 +330,6 @@
             location.reload();
         };
 
-        function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardContent').style.display = 'block';
-            loadAllOrders();
-            loadAllProducts();
-        }
-
-        if (sessionStorage.getItem('anchal_admin_auth') === 'true') {
-            showDashboard();
-        }
-
-        setInterval(() => {
-            if (sessionStorage.getItem('anchal_admin_auth') === 'true') {
-                loadAllOrders(true);
-            }
-        }, 12000);
-
         window.switchTab = function(tab) {
             document.getElementById('tabOrdersBtn').classList.toggle('active', tab === 'orders');
             document.getElementById('tabProductsBtn').classList.toggle('active', tab === 'products');
@@ -386,40 +337,29 @@
             document.getElementById('productsSection').style.display = tab === 'products' ? 'block' : 'none';
         };
 
-        function updateOrderStatsAndRender() {
-            document.getElementById('statTotalOrders').innerText = allOrders.length;
-            const delivered = allOrders.filter(o => (o.status || '').includes('Delivered')).length;
-            const cancelled = allOrders.filter(o => (o.status || '').includes('Cancelled')).length;
-            document.getElementById('statDelivered').innerText = delivered;
-            document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
-            const rev = allOrders.filter(o => !(o.status || '').includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
-            document.getElementById('statRevenue').innerText = `₹${rev}`;
-            renderOrders();
-        }
-
-        window.loadAllOrders = async function(isSilent = false) {
-            const listDiv = document.getElementById('adminOrdersList');
-            const cached = JSON.parse(localStorage.getItem('anchal_admin_orders_cache') || '[]');
-            
-            if (cached.length > 0 && allOrders.length === 0) {
-                allOrders = cached;
-                updateOrderStatsAndRender();
-            } else if (!isSilent && allOrders.length === 0) {
-                listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Loading orders...</p>`;
-            }
-
+        window.loadAllOrders = async function() {
             try {
-                const res = await fetch(`${FIRESTORE_URL}/orders?pageSize=200&_t=${Date.now()}`, { cache: 'no-store' });
-                const data = await res.json();
-                const freshOrders = (data.documents || []).map(parseFirestoreDoc);
-                freshOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-                allOrders = freshOrders;
-                localStorage.setItem('anchal_admin_orders_cache', JSON.stringify(allOrders));
-                updateOrderStatsAndRender();
-            } catch (e) {
-                console.error("Orders fetch failed:", e);
+                const snap = await getDocs(collection(db, "orders"));
+                const fresh = [];
+                snap.forEach(d => fresh.push(d.data()));
+                fresh.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                if (fresh.length > 0 || allOrders.length === 0) {
+                    allOrders = fresh;
+                    localStorage.setItem('anchal_orders_v2', JSON.stringify(allOrders));
+                    paintOrders(allOrders);
+                }
+            } catch (err) {
+                console.error("Fetch orders error:", err);
             }
+
+            onSnapshot(collection(db, "orders"), (snap) => {
+                const live = [];
+                snap.forEach(d => live.push(d.data()));
+                live.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                allOrders = live;
+                localStorage.setItem('anchal_orders_v2', JSON.stringify(allOrders));
+                paintOrders(allOrders);
+            });
         };
 
         window.renderOrders = function() {
@@ -464,31 +404,18 @@
         };
 
         window.changeOrderStatus = async function(id, status) {
-            await fetch(`${FIRESTORE_URL}/orders/${id}?updateMask.fieldPaths=status`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fields: { status: { stringValue: status } } })
-            });
-            loadAllOrders();
+            await updateDoc(doc(db, "orders", id), { status });
         };
-
         window.deleteOrder = async function(id) {
-            if (confirm(`Delete order ${id} permanently?`)) {
-                await fetch(`${FIRESTORE_URL}/orders/${id}`, { method: 'DELETE' });
-                loadAllOrders();
-            }
+            if (confirm(`Delete order ${id} permanently?`)) { await deleteDoc(doc(db, "orders", id)); }
         };
 
         window.loadAllProducts = async function() {
             const listDiv = document.getElementById('adminProductsList');
-            try {
-                const res = await fetch(`${FIRESTORE_URL}/products?pageSize=100&_t=${Date.now()}`, { cache: 'no-store' });
-                const data = await res.json();
-                allProducts = (data.documents || []).map(parseFirestoreDoc);
-                allProducts.sort((a, b) => Number(a.id) - Number(b.id));
-            } catch (e) {
-                console.error(e);
-            }
+            const snap = await getDocs(collection(db, "products"));
+            allProducts = [];
+            snap.forEach(d => allProducts.push(d.data()));
+            allProducts.sort((a, b) => Number(a.id) - Number(b.id));
 
             if (!allProducts.length) {
                 listDiv.innerHTML = `<div style="background:#fff; padding:28px; text-align:center; border-radius:10px; border:1px solid #e5e7eb;">No products in database yet. Click <strong>"Import 8 Default Spices"</strong> above to populate your catalog.</div>`;
@@ -523,19 +450,11 @@
         };
 
         window.toggleProductStock = async function(id, state) {
-            await fetch(`${FIRESTORE_URL}/products/${id}?updateMask.fieldPaths=inStock`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fields: { inStock: { booleanValue: state } } })
-            });
+            await updateDoc(doc(db, "products", String(id)), { inStock: state });
             loadAllProducts();
         };
-
         window.deleteProduct = async function(id) {
-            if (confirm("Delete this product from the live store?")) {
-                await fetch(`${FIRESTORE_URL}/products/${id}`, { method: 'DELETE' });
-                loadAllProducts();
-            }
+            if (confirm("Delete this product from the live store?")) { await deleteDoc(doc(db, "products", String(id))); loadAllProducts(); }
         };
 
         window.openProductModal = function(prodId = null) {
@@ -574,7 +493,7 @@
         window.saveProductToDB = async function(e) {
             e.preventDefault();
             const id = Number(document.getElementById('editProdId').value);
-            const payload = {
+            await setDoc(doc(db, "products", String(id)), {
                 id,
                 name: document.getElementById('editProdName').value,
                 desc: document.getElementById('editProdDesc').value,
@@ -585,11 +504,6 @@
                     { weight: document.getElementById('editPack1Weight').value, price: Number(document.getElementById('editPack1Price').value) },
                     { weight: document.getElementById('editPack2Weight').value, price: Number(document.getElementById('editPack2Price').value) }
                 ]
-            };
-            await fetch(`${FIRESTORE_URL}/products/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fields: toFirestoreFields(payload) })
             });
             closeProductModal();
             loadAllProducts();
@@ -606,13 +520,7 @@
                 { id: 7, name: "Anchal Classic Khada Garam Masala Pack", desc: "Pure Whole Cinnamon, Cardamom, Star Anise, Cloves & Poppy Seeds", category: "garam", img: "images/7.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "50g", price: 99 }] },
                 { id: 8, name: "Anchal Value Saver Combo (Pack of 2)", desc: "Double Pack of Shuddh Khada Garam Masala for Family Kitchens", category: "combo", img: "images/8.jpg.jpg", inStock: true, packs: [{ weight: "250g x 2 Pack", price: 749 }, { weight: "250g x 1 Pack", price: 399 }] }
             ];
-            for (const p of defaults) {
-                await fetch(`${FIRESTORE_URL}/products/${p.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fields: toFirestoreFields(p) })
-                });
-            }
+            for (const p of defaults) await setDoc(doc(db, "products", String(p.id)), p);
             loadAllProducts();
             alert("All 8 default spices have been imported to the database.");
         };
