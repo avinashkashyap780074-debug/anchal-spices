@@ -3,224 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Anchal Spices & Food Products</title>
+    <title>Admin Console | Anchal Spices & Food Products</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #f6f2eb; color: #2b1d14; }
-        
+        :root {
+            --bg-body: #f4f5f7;
+            --bg-card: #ffffff;
+            --nav-dark: #111827;
+            --brand: #881337;
+            --brand-dark: #6b0f2b;
+            --gold: #b45309;
+            --emerald: #047857;
+            --text-dark: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg-body); color: var(--text-dark); }
+
         /* Login Screen */
         .login-screen {
-            position: fixed; inset: 0; background: linear-gradient(135deg, #4a0e0e, #801b1b);
+            position: fixed; inset: 0;
+            background: linear-gradient(145deg, #111827 0%, #29131b 100%);
             display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
         }
         .login-box {
-            background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
+            background: #fff; padding: 38px 32px; border-radius: 14px; width: 100%; max-width: 390px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35); text-align: center;
         }
-        .login-box h2 { color: #801b1b; margin-bottom: 6px; }
-        .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
-        .login-box input {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
-            margin-bottom: 14px; font-size: 15px;
+        .login-badge {
+            width: 48px; height: 48px; border-radius: 12px; background: #fff1f2; color: var(--brand);
+            display: inline-flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px;
         }
-        .login-box button {
-            width: 100%; padding: 12px; background: #801b1b; color: #fff; border: none;
-            border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;
+        .login-box h2 { font-size: 21px; font-weight: 700; margin-bottom: 4px; }
+        .login-box h2 span { color: var(--brand); }
+        .login-box p { color: var(--text-muted); font-size: 13px; margin-bottom: 22px; }
+
+        .pass-wrap { position: relative; margin-bottom: 16px; }
+        .pass-wrap input {
+            width: 100%; padding: 12px 42px 12px 14px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s;
         }
+        .pass-wrap input:focus { border-color: var(--brand); }
+        .pass-wrap i {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--text-muted); font-size: 15px;
+        }
+        .pass-wrap i:hover { color: var(--text-dark); }
+
+        .btn-login {
+            width: 100%; padding: 12px; background: var(--brand); color: #fff; border: none;
+            border-radius: 8px; font-weight: 600; font-size: 14.5px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-login:hover { background: var(--brand-dark); }
+        .err-msg { display: none; color: #b91c1c; background: #fef2f2; padding: 8px; border-radius: 6px; font-size: 12.5px; margin-top: 12px; }
 
         /* Top Navbar */
-        .admin-nav {
-            background: #801b1b; color: #fff; padding: 15px 24px;
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        .topbar {
+            background: var(--nav-dark); color: #fff; padding: 14px 28px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
         }
-        .admin-nav h1 { font-size: 20px; }
-        .admin-nav span { color: #f4a261; }
-        .nav-actions button {
-            background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);
-            padding: 7px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; margin-left: 6px;
+        .brand-title { display: flex; align-items: center; gap: 10px; }
+        .brand-title h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .brand-title h1 span { color: #f59e0b; }
+        .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; }
+        .nav-btns { display: flex; gap: 8px; }
+        .nav-btns button {
+            background: rgba(255,255,255,0.08); color: #e5e7eb; border: 1px solid rgba(255,255,255,0.14);
+            padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; transition: 0.2s;
         }
-        .nav-actions button:hover { background: rgba(255,255,255,0.28); }
+        .nav-btns button:hover { background: rgba(255,255,255,0.16); color: #fff; }
 
-        /* Main Tabs */
-        .main-tabs {
-            max-width: 1150px; margin: 20px auto 0; padding: 0 16px;
-            display: flex; gap: 10px; border-bottom: 2px solid #e2d8c8;
+        /* Sub Navigation Tabs */
+        .subnav {
+            background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0 28px;
+            display: flex; gap: 24px;
         }
         .tab-btn {
-            padding: 12px 22px; background: #e9e0d1; border: none; border-radius: 8px 8px 0 0;
-            font-weight: 700; font-size: 15px; cursor: pointer; color: #5a4638;
+            padding: 14px 4px; background: none; border: none; border-bottom: 2.5px solid transparent;
+            font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.2s;
         }
-        .tab-btn.active { background: #801b1b; color: #fff; }
+        .tab-btn:hover { color: var(--text-dark); }
+        .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
 
-        .container { max-width: 1150px; margin: 20px auto; padding: 0 16px; }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px; margin-bottom: 24px;
-        }
-        .stat-card {
-            background: #fff; padding: 18px; border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #801b1b;
-        }
-        .stat-card small { color: #777; font-size: 12px; text-transform: uppercase; font-weight: 600; }
-        .stat-card h3 { font-size: 26px; margin-top: 6px; }
+        .container { max-width: 1140px; margin: 24px auto; padding: 0 20px; }
 
-        /* Controls */
-        .controls-bar { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-        .controls-bar input, .controls-bar select {
-            padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; background: #fff; font-size: 14px;
+        /* Refined KPI Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 22px; }
+        .kpi-card {
+            background: var(--bg-card); padding: 18px 20px; border-radius: 10px;
+            border: 1px solid var(--border); border-top: 3px solid var(--nav-dark);
         }
-        .controls-bar input { flex: 1; min-width: 220px; }
+        .kpi-card.gold { border-top-color: var(--gold); }
+        .kpi-card.emerald { border-top-color: var(--emerald); }
+        .kpi-card.brand { border-top-color: var(--brand); }
+        .kpi-card small { color: var(--text-muted); font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-card h3 { font-size: 25px; font-weight: 700; margin-top: 6px; }
+
+        /* Controls Bar */
+        .toolbar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .toolbar input, .toolbar select {
+            padding: 10px 13px; border: 1px solid var(--border); border-radius: 8px;
+            background: var(--bg-card); font-size: 13.5px; outline: none;
+        }
+        .toolbar input:focus, .toolbar select:focus { border-color: var(--brand); }
+        .toolbar input { flex: 1; min-width: 220px; }
 
         /* Cards */
-        .order-card, .prod-admin-card {
-            background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eee;
-            display: grid; grid-template-columns: 2fr 1.2fr; gap: 16px; align-items: center;
+        .item-card {
+            background: var(--bg-card); border-radius: 10px; padding: 18px; margin-bottom: 12px;
+            border: 1px solid var(--border); display: grid; grid-template-columns: 2fr 1.15fr; gap: 18px; align-items: center;
         }
-        .prod-admin-card { grid-template-columns: 80px 2fr 1.3fr; }
-        @media (max-width: 768px) {
-            .order-card, .prod-admin-card { grid-template-columns: 1fr; }
-        }
-        .prod-thumb {
-            width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;
-        }
-        .order-id { background: #fdf8ee; color: #801b1b; font-weight: bold; padding: 4px 10px; border-radius: 4px; border: 1px solid #e6d5b8; }
-        .pay-badge { font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600; background: #e8f5e9; color: #2e7d32; }
-        .stock-badge-in { background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .stock-badge-out { background: #ffebee; color: #c62828; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .prod-card { grid-template-columns: 76px 2fr 1.2fr; }
+        @media (max-width: 768px) { .item-card, .prod-card { grid-template-columns: 1fr; } }
 
-        .action-box {
-            display: flex; flex-direction: column; gap: 8px; background: #fdfbf7;
-            padding: 12px; border-radius: 8px; border: 1px solid #f0e6d6;
-        }
-        .btn-primary-sm {
-            background: #801b1b; color: #fff; border: none; padding: 9px 14px;
-            border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px;
-        }
-        .btn-wa {
-            flex: 1; background: #25D366; color: #fff; border: none; padding: 8px;
-            border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
-        }
-        .btn-del {
-            background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 8px 10px;
-            border-radius: 5px; cursor: pointer; font-size: 13px;
+        .prod-thumb { width: 76px; height: 76px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+        .tag { display: inline-block; padding: 3px 9px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+        .tag-id { background: #f3f4f6; color: #1f2937; border: 1px solid #d1d5db; }
+        .tag-pay { background: #fffbeb; color: var(--gold); border: 1px solid #fde68a; }
+        .tag-in { background: #ecfdf5; color: var(--emerald); border: 1px solid #a7f3d0; }
+        .tag-out { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .items-box {
+            background: #f9fafb; border: 1px solid var(--border); padding: 9px 12px;
+            border-radius: 6px; font-size: 13px; font-weight: 600; margin-top: 8px; color: #374151;
         }
 
-        /* Product Edit Modal */
+        .action-panel {
+            background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .action-panel select { padding: 8px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px; background: #fff; }
+
+        /* Clean Buttons */
+        .btn {
+            padding: 8px 14px; border-radius: 7px; border: none; font-size: 13px; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: 0.15s;
+        }
+        .btn-brand { background: var(--brand); color: #fff; }
+        .btn-brand:hover { background: var(--brand-dark); }
+        .btn-dark { background: var(--nav-dark); color: #fff; }
+        .btn-outline { background: #fff; color: var(--text-dark); border: 1px solid #d1d5db; }
+        .btn-outline:hover { background: #f3f4f6; }
+        .btn-wa { background: #15803d; color: #fff; flex: 1; }
+        .btn-del { background: #fff; color: #b91c1c; border: 1px solid #fecaca; padding: 8px 11px; }
+        .btn-del:hover { background: #fef2f2; }
+
+        /* Modal */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none;
+            position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); display: none;
             align-items: center; justify-content: center; z-index: 3000; padding: 16px;
         }
         .modal-overlay.active { display: flex; }
         .modal-box {
-            background: #fff; width: 100%; max-width: 480px; border-radius: 12px;
+            background: #fff; width: 100%; max-width: 470px; border-radius: 12px;
             padding: 22px; max-height: 90vh; overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #555; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 9px 11px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .form-grp { margin-bottom: 12px; }
+        .form-grp label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+        .form-grp input, .form-grp select, .form-grp textarea {
+            width: 100%; padding: 9px 11px; border: 1px solid #d1d5db; border-radius: 7px; font-size: 13.5px; outline: none;
         }
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .form-grp input:focus, .form-grp select:focus, .form-grp textarea:focus { border-color: var(--brand); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Admin Password Lock -->
+    <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
+            <div class="login-badge"><i class="fas fa-lock"></i></div>
             <h2>Anchal<span>Spices</span> Admin</h2>
-            <p>Store Owner Control Panel</p>
-            <input type="password" id="adminPassInput" placeholder="Admin Password dalein..." onkeypress="if(event.key==='Enter') verifyAdmin()">
-            <button onclick="verifyAdmin()">Dashboard Kholein</button>
-            <p id="loginError" style="color:#d32f2f; margin-top:10px; display:none;">Galat Password! Dobara try karein.</p>
+            <p>Enter your passcode to access the store console</p>
+            <div class="pass-wrap">
+                <input type="password" id="adminPassInput" placeholder="Admin Password" onkeypress="if(event.key==='Enter') verifyAdmin()">
+                <i class="fas fa-eye" id="togglePassIcon" onclick="togglePass()" title="Show/Hide Password"></i>
+            </div>
+            <button class="btn-login" onclick="verifyAdmin()">Access Dashboard</button>
+            <div class="err-msg" id="loginError">Incorrect password. Please try again.</div>
         </div>
     </div>
 
     <!-- Main Dashboard -->
     <div id="dashboardContent" style="display:none;">
-        <header class="admin-nav">
-            <h1>Anchal<span>Spices</span> — Owner Control Panel</h1>
-            <div class="nav-actions">
-                <button onclick="window.open('index.html', '_blank')"><i class="fas fa-store"></i> Live Store</button>
+        <header class="topbar">
+            <div class="brand-title">
+                <h1>Anchal<span>Spices</span> Console</h1>
+                <span style="font-size:12px; color:#9ca3af;"><span class="status-dot"></span> Live Sync</span>
+            </div>
+            <div class="nav-btns">
+                <button onclick="window.open('index.html', '_blank')"><i class="fas fa-external-link-alt"></i> Live Store</button>
                 <button onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Lock</button>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
-        <div class="main-tabs">
-            <button class="tab-btn active" id="tabOrdersBtn" onclick="switchTab('orders')"><i class="fas fa-shopping-bag"></i> Customer Orders</button>
-            <button class="tab-btn" id="tabProductsBtn" onclick="switchTab('products')"><i class="fas fa-boxes"></i> Products & Stock</button>
-        </div>
+        <nav class="subnav">
+            <button class="tab-btn active" id="tabOrdersBtn" onclick="switchTab('orders')">Customer Orders</button>
+            <button class="tab-btn" id="tabProductsBtn" onclick="switchTab('products')">Products & Stock</button>
+        </nav>
 
-        <!-- TAB 1: ORDERS MANAGEMENT -->
+        <!-- TAB 1: ORDERS -->
         <div class="container" id="ordersSection">
             <div class="stats-grid">
-                <div class="stat-card"><small>Total Orders</small><h3 id="statTotalOrders">0</h3></div>
-                <div class="stat-card" style="border-left-color:#f4a261;"><small>Pending / Active</small><h3 id="statPending">0</h3></div>
-                <div class="stat-card" style="border-left-color:#2a9d8f;"><small>Delivered</small><h3 id="statDelivered">0</h3></div>
-                <div class="stat-card" style="border-left-color:#2e7d32;"><small>Total Revenue</small><h3 id="statRevenue">₹0</h3></div>
+                <div class="kpi-card"><small>Total Orders</small><h3 id="statTotalOrders">0</h3></div>
+                <div class="kpi-card gold"><small>Pending / Active</small><h3 id="statPending">0</h3></div>
+                <div class="kpi-card emerald"><small>Delivered</small><h3 id="statDelivered">0</h3></div>
+                <div class="kpi-card brand"><small>Total Revenue</small><h3 id="statRevenue">₹0</h3></div>
             </div>
 
-            <div class="controls-bar">
-                <input type="text" id="adminSearch" placeholder="Order ID, Customer Name ya Phone se khojein..." onkeyup="renderOrders()">
+            <div class="toolbar">
+                <input type="text" id="adminSearch" placeholder="Search by Order ID, customer name, or phone..." onkeyup="renderOrders()">
                 <select id="statusFilter" onchange="renderOrders()">
-                    <option value="ALL">All Orders</option>
-                    <option value="Confirmed">Confirmed / New</option>
+                    <option value="ALL">All Statuses</option>
+                    <option value="Confirmed">Confirmed</option>
                     <option value="Packed">Packed</option>
                     <option value="Out for Delivery">Out for Delivery</option>
                     <option value="Delivered">Delivered</option>
                     <option value="Cancelled">Cancelled</option>
                 </select>
-                <button class="btn-primary-sm" onclick="loadAllOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="btn btn-dark" onclick="loadAllOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
 
             <div id="adminOrdersList"></div>
         </div>
 
-        <!-- TAB 2: PRODUCTS & STOCK MANAGEMENT -->
+        <!-- TAB 2: PRODUCTS -->
         <div class="container" id="productsSection" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+            <div class="toolbar" style="justify-content:space-between; align-items:center;">
                 <div>
-                    <h2 style="font-size:19px;">Manage Masale, Prices & Stock</h2>
-                    <small style="color:#666;">Yahan kiya gaya koi bhi badlav turant live website par dikhega</small>
+                    <strong style="font-size:15px;">Catalog & Inventory</strong>
+                    <p style="font-size:12.5px; color:var(--text-muted);">Changes update instantly on the customer storefront.</p>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn-primary-sm" style="background:#2a9d8f;" onclick="seedDefaultProducts()"><i class="fas fa-upload"></i> Upload Default 8 Spices</button>
-                    <button class="btn-primary-sm" onclick="openProductModal()"><i class="fas fa-plus"></i> + Add New Spice</button>
+                    <button class="btn btn-outline" onclick="seedDefaultProducts()"><i class="fas fa-upload"></i> Import 8 Default Spices</button>
+                    <button class="btn btn-brand" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>
                 </div>
             </div>
-
             <div id="adminProductsList"></div>
         </div>
     </div>
 
-    <!-- Add / Edit Product Modal -->
+    <!-- Product Modal -->
     <div class="modal-overlay" id="productModal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3 id="prodModalTitle">Edit Product</h3>
-                <i class="fas fa-times" style="cursor:pointer;" onclick="closeProductModal()"></i>
+            <div class="modal-head">
+                <h3 id="prodModalTitle" style="font-size:16px;">Edit Product</h3>
+                <i class="fas fa-times" style="cursor:pointer; color:#6b7280;" onclick="closeProductModal()"></i>
             </div>
             <form onsubmit="saveProductToDB(event)">
                 <input type="hidden" id="editProdId">
-                
-                <div class="form-group">
-                    <label>Product Name (Masale ka Naam)</label>
-                    <input type="text" id="editProdName" placeholder="e.g. Anchal Shuddh Khada Garam Masala" required>
+                <div class="form-grp">
+                    <label>Product Name</label>
+                    <input type="text" id="editProdName" required>
                 </div>
-
-                <div class="form-group">
-                    <label>Description (Details)</label>
-                    <textarea id="editProdDesc" rows="2" placeholder="100% Pure Whole Spices..." required></textarea>
+                <div class="form-grp">
+                    <label>Description</label>
+                    <textarea id="editProdDesc" rows="2" required></textarea>
                 </div>
-
-                <div class="two-col">
-                    <div class="form-group">
+                <div class="grid-2">
+                    <div class="form-grp">
                         <label>Category</label>
                         <select id="editProdCategory">
                             <option value="garam">Garam Masala</option>
@@ -228,43 +271,27 @@
                             <option value="combo">Combo Packs</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-grp">
                         <label>Stock Status</label>
                         <select id="editProdStock">
-                            <option value="true">In Stock (Available)</option>
+                            <option value="true">In Stock</option>
                             <option value="false">Out of Stock</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Photo Path ya Image URL (e.g. images/1.jpg.jpg ya https://...)</label>
-                    <input type="text" id="editProdImg" placeholder="images/1.jpg.jpg" required>
+                <div class="form-grp">
+                    <label>Image Path or URL</label>
+                    <input type="text" id="editProdImg" required>
                 </div>
-
-                <div class="two-col">
-                    <div class="form-group">
-                        <label>Pack 1 Weight (e.g. 100g)</label>
-                        <input type="text" id="editPack1Weight" value="100g" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Pack 1 Price (₹)</label>
-                        <input type="number" id="editPack1Price" value="199" required>
-                    </div>
+                <div class="grid-2">
+                    <div class="form-grp"><label>Pack 1 Weight</label><input type="text" id="editPack1Weight" value="100g" required></div>
+                    <div class="form-grp"><label>Pack 1 Price (₹)</label><input type="number" id="editPack1Price" value="199" required></div>
                 </div>
-
-                <div class="two-col">
-                    <div class="form-group">
-                        <label>Pack 2 Weight (e.g. 250g)</label>
-                        <input type="text" id="editPack2Weight" value="250g" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Pack 2 Price (₹)</label>
-                        <input type="number" id="editPack2Price" value="399" required>
-                    </div>
+                <div class="grid-2">
+                    <div class="form-grp"><label>Pack 2 Weight</label><input type="text" id="editPack2Weight" value="250g" required></div>
+                    <div class="form-grp"><label>Pack 2 Price (₹)</label><input type="number" id="editPack2Price" value="399" required></div>
                 </div>
-
-                <button type="submit" class="btn-primary-sm" style="width:100%; padding:12px; font-size:15px; margin-top:8px;">Save Changes to Live Website</button>
+                <button type="submit" class="btn btn-brand" style="width:100%; padding:11px; margin-top:6px;">Save & Publish</button>
             </form>
         </div>
     </div>
@@ -286,10 +313,16 @@
         const ADMIN_PASS = "anchal2026";
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        let allOrders = [];
-        let allProducts = [];
+        let allOrders = [], allProducts = [];
 
-        // Auth & Tabs
+        window.togglePass = function() {
+            const inp = document.getElementById('adminPassInput');
+            const ico = document.getElementById('togglePassIcon');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            ico.classList.toggle('fa-eye');
+            ico.classList.toggle('fa-eye-slash');
+        };
+
         window.verifyAdmin = function() {
             if (document.getElementById('adminPassInput').value === ADMIN_PASS) {
                 sessionStorage.setItem('anchal_admin_auth', 'true');
@@ -315,22 +348,21 @@
             document.getElementById('productsSection').style.display = tab === 'products' ? 'block' : 'none';
         };
 
-        // ================= ORDERS LOGIC =================
         window.loadAllOrders = async function() {
             const listDiv = document.getElementById('adminOrdersList');
-            listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Orders load ho rahe hain...</p>`;
-            const snapshot = await getDocs(collection(db, "orders"));
+            listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Loading orders...</p>`;
+            const snap = await getDocs(collection(db, "orders"));
             allOrders = [];
-            snapshot.forEach(d => allOrders.push(d.data()));
+            snap.forEach(d => allOrders.push(d.data()));
             allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            
+
             document.getElementById('statTotalOrders').innerText = allOrders.length;
             const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
             const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
             document.getElementById('statDelivered').innerText = delivered;
             document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
-            const revenue = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
-            document.getElementById('statRevenue').innerText = `₹${revenue}`;
+            const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+            document.getElementById('statRevenue').innerText = `₹${rev}`;
             renderOrders();
         };
 
@@ -338,28 +370,28 @@
             const kw = document.getElementById('adminSearch').value.toLowerCase();
             const flt = document.getElementById('statusFilter').value;
             const listDiv = document.getElementById('adminOrdersList');
-            const filtered = allOrders.filter(o => 
+            const filtered = allOrders.filter(o =>
                 ((o.id||'').toLowerCase().includes(kw) || (o.name||'').toLowerCase().includes(kw) || (o.phone||'').includes(kw)) &&
                 (flt === 'ALL' || (o.status||'').includes(flt))
             );
-            if (!filtered.length) return listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Koi order nahi mila.</p>`;
+            if (!filtered.length) return listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">No matching orders found.</p>`;
 
             listDiv.innerHTML = filtered.map(o => {
-                const waMsg = encodeURIComponent(`Namaste ${o.name}! Aapka Anchal Spices Order (${o.id}) ka status update hua hai: *${o.status}*. Dhanyawad!`);
+                const msg = encodeURIComponent(`Hello ${o.name}, your Anchal Spices order (${o.id}) status has been updated to: *${o.status}*. Thank you!`);
                 return `
-                    <div class="order-card">
+                    <div class="item-card">
                         <div>
-                            <div style="display:flex; gap:10px; margin-bottom:8px;">
-                                <span class="order-id">${o.id}</span>
-                                <span class="pay-badge">${o.payment || 'COD'} — ₹${o.total}</span>
+                            <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+                                <span class="tag tag-id">${o.id}</span>
+                                <span class="tag tag-pay">${o.payment || 'COD'} • ₹${o.total}</span>
                             </div>
-                            <p><strong>Customer:</strong> ${o.name} | <strong>Phone:</strong> <a href="tel:${o.phone}">${o.phone}</a></p>
-                            <p><strong>Address:</strong> ${o.address}</p>
-                            <div style="background:#faf7f2; padding:8px; border-radius:6px; font-weight:600; margin-top:6px;">${o.items}</div>
+                            <p style="font-size:14px;"><strong>${o.name}</strong> • <a href="tel:${o.phone}" style="color:#374151;">${o.phone}</a></p>
+                            <p style="font-size:13px; color:#6b7280; margin-top:2px;">${o.address}</p>
+                            <div class="items-box">${o.items}</div>
                         </div>
-                        <div class="action-box">
-                            <label style="font-size:12px; font-weight:bold;">Order Status:</label>
-                            <select style="padding:8px; border-radius:5px;" onchange="changeOrderStatus('${o.id}', this.value)">
+                        <div class="action-panel">
+                            <label style="font-size:11.5px; font-weight:600; color:#4b5563;">FULFILLMENT STATUS</label>
+                            <select onchange="changeOrderStatus('${o.id}', this.value)">
                                 <option value="Order Confirmed & Freshly Packed by Anchal Spices" ${o.status.includes('Confirmed')?'selected':''}>1. Order Confirmed</option>
                                 <option value="Packed & Ready for Dispatch" ${o.status.includes('Packed & Ready')?'selected':''}>2. Packed & Ready</option>
                                 <option value="Shipped / Out for Delivery" ${o.status.includes('Out for Delivery')?'selected':''}>3. Out for Delivery</option>
@@ -367,8 +399,8 @@
                                 <option value="Cancelled" ${o.status.includes('Cancelled')?'selected':''}>5. Cancelled</option>
                             </select>
                             <div style="display:flex; gap:8px;">
-                                <a class="btn-wa" href="https://wa.me/91${o.phone}?text=${waMsg}" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                                <button class="btn-del" onclick="deleteOrder('${o.id}')"><i class="fas fa-trash"></i></button>
+                                <a class="btn btn-wa" href="https://wa.me/91${o.phone}?text=${msg}" target="_blank"><i class="fab fa-whatsapp"></i> Notify</a>
+                                <button class="btn btn-del" onclick="deleteOrder('${o.id}')" title="Delete Order"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
@@ -378,72 +410,62 @@
         window.changeOrderStatus = async function(id, status) {
             await updateDoc(doc(db, "orders", id), { status });
             loadAllOrders();
-            alert(`Status updated: ${status}`);
         };
         window.deleteOrder = async function(id) {
-            if (confirm(`Delete Order ${id}?`)) { await deleteDoc(doc(db, "orders", id)); loadAllOrders(); }
+            if (confirm(`Delete order ${id} permanently?`)) { await deleteDoc(doc(db, "orders", id)); loadAllOrders(); }
         };
 
-        // ================= PRODUCTS & STOCK LOGIC =================
         window.loadAllProducts = async function() {
             const listDiv = document.getElementById('adminProductsList');
-            listDiv.innerHTML = `<p style="text-align:center; padding:20px;">Products load ho rahe hain...</p>`;
-            const snapshot = await getDocs(collection(db, "products"));
+            const snap = await getDocs(collection(db, "products"));
             allProducts = [];
-            snapshot.forEach(d => allProducts.push(d.data()));
+            snap.forEach(d => allProducts.push(d.data()));
             allProducts.sort((a, b) => Number(a.id) - Number(b.id));
 
-            if (allProducts.length === 0) {
-                listDiv.innerHTML = `
-                    <div style="background:#fff; padding:30px; text-align:center; border-radius:10px;">
-                        <p style="margin-bottom:12px;">Abhi Database mein koi product nahi hai. Pehle upar <strong>"Upload Default 8 Spices"</strong> button par click karein taaki aapke saare 8 masale database mein aa jayein!</p>
-                    </div>`;
+            if (!allProducts.length) {
+                listDiv.innerHTML = `<div style="background:#fff; padding:28px; text-align:center; border-radius:10px; border:1px solid #e5e7eb;">No products in database yet. Click <strong>"Import 8 Default Spices"</strong> above to populate your catalog.</div>`;
                 return;
             }
 
             listDiv.innerHTML = allProducts.map(p => {
                 const inStock = p.inStock !== false;
-                const packsText = (p.packs || []).map(pk => `${pk.weight}: ₹${pk.price}`).join(' | ');
+                const packs = (p.packs || []).map(pk => `${pk.weight}: ₹${pk.price}`).join(' | ');
                 return `
-                    <div class="prod-admin-card">
+                    <div class="item-card prod-card">
                         <img src="${p.img}" class="prod-thumb" onerror="this.src='https://via.placeholder.com/80?text=Spice'">
                         <div>
                             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
-                                <strong>#${p.id} — ${p.name}</strong>
-                                <span class="${inStock ? 'stock-badge-in' : 'stock-badge-out'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
+                                <strong style="font-size:15px;">#${p.id} ${p.name}</strong>
+                                <span class="tag ${inStock ? 'tag-in' : 'tag-out'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
                             </div>
-                            <p style="font-size:13px; color:#666; margin-bottom:6px;">${p.desc}</p>
-                            <div style="font-size:13px; font-weight:bold; color:#801b1b;">${packsText} <span style="color:#777; font-weight:normal;">(Category: ${p.category})</span></div>
+                            <p style="font-size:13px; color:#6b7280; margin-bottom:6px;">${p.desc}</p>
+                            <div style="font-size:13px; font-weight:600; color:var(--brand);">${packs} <span style="color:#6b7280; font-weight:400;">(${p.category})</span></div>
                         </div>
-                        <div class="action-box">
-                            <button class="btn-primary-sm" onclick="openProductModal('${p.id}')"><i class="fas fa-edit"></i> Edit Name / Price / Photo</button>
+                        <div class="action-panel">
+                            <button class="btn btn-dark" onclick="openProductModal('${p.id}')"><i class="fas fa-edit"></i> Edit Details</button>
                             <div style="display:flex; gap:8px;">
-                                <button class="btn-primary-sm" style="flex:1; background:${inStock ? '#e65100' : '#2e7d32'};" onclick="toggleProductStock('${p.id}', ${!inStock})">
-                                    ${inStock ? 'Mark Out of Stock' : 'Mark In Stock'}
+                                <button class="btn btn-outline" style="flex:1;" onclick="toggleProductStock('${p.id}', ${!inStock})">
+                                    ${inStock ? 'Set Out of Stock' : 'Set In Stock'}
                                 </button>
-                                <button class="btn-del" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-del" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
             }).join('');
         };
 
-        window.toggleProductStock = async function(id, newStockState) {
-            await updateDoc(doc(db, "products", String(id)), { inStock: newStockState });
+        window.toggleProductStock = async function(id, state) {
+            await updateDoc(doc(db, "products", String(id)), { inStock: state });
             loadAllProducts();
         };
-
         window.deleteProduct = async function(id) {
-            if (confirm("Kya aap sach mein is product ko delete karna chahte hain?")) {
-                await deleteDoc(doc(db, "products", String(id)));
-                loadAllProducts();
-            }
+            if (confirm("Delete this product from the live store?")) { await deleteDoc(doc(db, "products", String(id))); loadAllProducts(); }
         };
 
         window.openProductModal = function(prodId = null) {
             const modal = document.getElementById('productModal');
             if (prodId) {
-                const p = allProducts.find(item => String(item.id) === String(prodId));
+                const p = allProducts.find(x => String(x.id) === String(prodId));
                 document.getElementById('prodModalTitle').innerText = `Edit Product #${p.id}`;
                 document.getElementById('editProdId').value = p.id;
                 document.getElementById('editProdName').value = p.name;
@@ -456,8 +478,8 @@
                 document.getElementById('editPack2Weight').value = p.packs[1]?.weight || "250g";
                 document.getElementById('editPack2Price').value = p.packs[1]?.price || 399;
             } else {
-                const nextId = allProducts.length > 0 ? Math.max(...allProducts.map(x => Number(x.id))) + 1 : 1;
-                document.getElementById('prodModalTitle').innerText = "Add New Spice Product";
+                const nextId = allProducts.length ? Math.max(...allProducts.map(x => Number(x.id))) + 1 : 1;
+                document.getElementById('prodModalTitle').innerText = "Add New Product";
                 document.getElementById('editProdId').value = nextId;
                 document.getElementById('editProdName').value = "";
                 document.getElementById('editProdDesc').value = "";
@@ -471,14 +493,13 @@
             }
             modal.classList.add('active');
         };
-
         window.closeProductModal = function() { document.getElementById('productModal').classList.remove('active'); };
 
         window.saveProductToDB = async function(e) {
             e.preventDefault();
             const id = Number(document.getElementById('editProdId').value);
-            const productData = {
-                id: id,
+            await setDoc(doc(db, "products", String(id)), {
+                id,
                 name: document.getElementById('editProdName').value,
                 desc: document.getElementById('editProdDesc').value,
                 category: document.getElementById('editProdCategory').value,
@@ -488,14 +509,11 @@
                     { weight: document.getElementById('editPack1Weight').value, price: Number(document.getElementById('editPack1Price').value) },
                     { weight: document.getElementById('editPack2Weight').value, price: Number(document.getElementById('editPack2Price').value) }
                 ]
-            };
-            await setDoc(doc(db, "products", String(id)), productData);
+            });
             closeProductModal();
             loadAllProducts();
-            alert("Product save ho gaya! Live website par turant update ho chuka hai.");
         };
 
-        // One-Click Upload Default 8 Products to Firestore
         window.seedDefaultProducts = async function() {
             const defaults = [
                 { id: 1, name: "Anchal Shuddh Khada Garam Masala (Zipper Pouch)", desc: "100% Pure Whole Spices: Dalchini, Hari & Badi Elaichi, Laung, Kali Mirch, Javitri & Jeera", category: "garam", img: "images/1.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "250g", price: 399 }] },
@@ -507,11 +525,9 @@
                 { id: 7, name: "Anchal Classic Khada Garam Masala Pack", desc: "Pure Whole Cinnamon, Cardamom, Star Anise, Cloves & Poppy Seeds", category: "garam", img: "images/7.jpg.jpg", inStock: true, packs: [{ weight: "100g", price: 199 }, { weight: "50g", price: 99 }] },
                 { id: 8, name: "Anchal Value Saver Combo (Pack of 2)", desc: "Double Pack of Shuddh Khada Garam Masala for Family Kitchens", category: "combo", img: "images/8.jpg.jpg", inStock: true, packs: [{ weight: "250g x 2 Pack", price: 749 }, { weight: "250g x 1 Pack", price: 399 }] }
             ];
-            for (const p of defaults) {
-                await setDoc(doc(db, "products", String(p.id)), p);
-            }
+            for (const p of defaults) await setDoc(doc(db, "products", String(p.id)), p);
             loadAllProducts();
-            alert("Saare 8 default masale Database mein upload ho gaye hain!");
+            alert("All 8 default spices have been imported to the database.");
         };
     </script>
 </body>
