@@ -314,6 +314,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         let allOrders = [], allProducts = [];
+        let unsubscribeOrders = null;
 
         window.togglePass = function() {
             const inp = document.getElementById('adminPassInput');
@@ -348,22 +349,47 @@
             document.getElementById('productsSection').style.display = tab === 'products' ? 'block' : 'none';
         };
 
-        window.loadAllOrders = function() {
-            const listDiv = document.getElementById('adminOrdersList');
-            listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Syncing live orders...</p>`;
-            onSnapshot(collection(db, "orders"), (snap) => {
-                allOrders = [];
-                snap.forEach(d => allOrders.push(d.data()));
-                allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        function updateOrderStatsAndRender() {
+            document.getElementById('statTotalOrders').innerText = allOrders.length;
+            const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
+            const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
+            document.getElementById('statDelivered').innerText = delivered;
+            document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
+            const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
+            document.getElementById('statRevenue').innerText = `₹${rev}`;
+            renderOrders();
+        }
 
-                document.getElementById('statTotalOrders').innerText = allOrders.length;
-                const delivered = allOrders.filter(o => o.status?.includes('Delivered')).length;
-                const cancelled = allOrders.filter(o => o.status?.includes('Cancelled')).length;
-                document.getElementById('statDelivered').innerText = delivered;
-                document.getElementById('statPending').innerText = allOrders.length - delivered - cancelled;
-                const rev = allOrders.filter(o => !o.status?.includes('Cancelled')).reduce((s, o) => s + (Number(o.total) || 0), 0);
-                document.getElementById('statRevenue').innerText = `₹${rev}`;
-                renderOrders();
+        window.loadAllOrders = async function() {
+            const listDiv = document.getElementById('adminOrdersList');
+            const cached = JSON.parse(localStorage.getItem('anchal_admin_orders_cache') || '[]');
+            if (cached.length > 0 && allOrders.length === 0) {
+                allOrders = cached;
+                updateOrderStatsAndRender();
+            } else if (allOrders.length === 0) {
+                listDiv.innerHTML = `<p style="text-align:center; padding:24px; color:#6b7280;">Syncing live orders...</p>`;
+            }
+
+            try {
+                const snap = await getDocs(collection(db, "orders"));
+                const freshOrders = [];
+                snap.forEach(d => freshOrders.push(d.data()));
+                freshOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                allOrders = freshOrders;
+                localStorage.setItem('anchal_admin_orders_cache', JSON.stringify(allOrders));
+                updateOrderStatsAndRender();
+            } catch (e) {
+                console.error("Direct fetch error:", e);
+            }
+
+            if (unsubscribeOrders) unsubscribeOrders();
+            unsubscribeOrders = onSnapshot(collection(db, "orders"), (snap) => {
+                const liveOrders = [];
+                snap.forEach(d => liveOrders.push(d.data()));
+                liveOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                allOrders = liveOrders;
+                localStorage.setItem('anchal_admin_orders_cache', JSON.stringify(allOrders));
+                updateOrderStatsAndRender();
             });
         };
 
